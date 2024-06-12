@@ -1,26 +1,23 @@
 clear all;
 close all;
 clc;
-%%%%%%%%%%%%%µØÕğÊı¾İ%%%%%%%%%%%%%%%%%%%%%
-[seismic, sampint, ch, bh,th]=altreadsegy('copy_post_stack_300_256_delta30.sgy','textHeader','yes',...
-    'textformat','ascii','fpformat','ibm','binaryheader','yes','traceheaders','yes');
+%%%%%%%%%%%%%åœ°éœ‡æ•°æ®%%%%%%%%%%%%%%%%%%%%%
+load field_seismic_data.mat;
 
-% ntrace=400;   %µØÕğÊı¾İµÄµÀÊı 
-% nsample=sampint; %µØÕğÊı¾İ²ÉÑùµãÊı
 [nsample,ntrace]=size(seismic);
 
-% dts=0.002;   %µØÕğÊı¾İ²ÉÑùÂÊ¡£µ¥Î»s
+% dts=0.002;   %åœ°éœ‡æ•°æ®é‡‡æ ·ç‡ã€‚å•ä½s
 dt=0.004;
 fs=1/dt;
 t = 0:1:nsample-1;
 
-%% ISD²ÎÊı
-fstart = 1;%ÏàÎ»ÏÂ±ß½ç
-fstop  = 120;%ÏàÎ»ÉÏ±ß½ç
-delpha =  1;%ÆµÂÊÉ¨Ãè¼ä¸ô
+%% ISDå‚æ•°
+fstart = 1;%ç›¸ä½ä¸‹è¾¹ç•Œ
+fstop  = 120;%ç›¸ä½ä¸Šè¾¹ç•Œ
+delpha =  1;%é¢‘ç‡æ‰«æé—´éš”
 f_num = fstart:delpha:fstop;
 WaveMat = zeros(nsample,nsample*length(f_num));
-%% ¹¹½¨×Ó²¨¾ØÕó
+%% æ„å»ºå­æ³¢çŸ©é˜µ
 for k = 1:1:length(f_num)
     k
     source = ricker(dt,f_num(k));
@@ -31,28 +28,28 @@ for k = 1:1:length(f_num)
 end
 
 
-% ·ÖÎöÌØ¶¨µÀ¼¯
+% åˆ†æç‰¹å®šé“é›†
 %block = 29;
 f_max = 80;
 f_min = 10;
 interval =5;
 
-% ¼ÆËãÆµÂÊÊı×é
+% è®¡ç®—é¢‘ç‡æ•°ç»„
 f = (0:nsample-1) * fs / nsample;
-f = f(1:floor(nsample/2) + 1); % Ö»È¡ÕıÆµ²¿·Ö
+f = f(1:floor(nsample/2) + 1); % åªå–æ­£é¢‘éƒ¨åˆ†
 
-% ÕÒµ½ÆµÂÊ·¶Î§¶ÔÓ¦µÄË÷Òı
+% æ‰¾åˆ°é¢‘ç‡èŒƒå›´å¯¹åº”çš„ç´¢å¼•
 f_sampled = f_min:interval:f_max;
 idx_sampled = arrayfun(@(freq) find(abs(f - freq) == min(abs(f - freq)), 1), f_sampled);
 
-well_trace = [63 64 65  240 241 242];% ¶¨ÒåÒª·ÖÎöµÄµÀºÅ
+well_trace = [63 64 65  240 241 242];% å®šä¹‰è¦åˆ†æçš„é“å·
 for i= well_trace
     waitbar(i/ntrace);
 
     x = seismic(:,i);
     x = x/max(abs(x));
 
-    %% L1L2Çó½âÊ±ÆµÆ×
+    %% L1L2æ±‚è§£æ—¶é¢‘è°±
     pm.lambda = 0.25;
     pm.delta = 15000;
     pm.alpha = 1;
@@ -61,27 +58,27 @@ for i= well_trace
 
     Spec = reshape(xADMM,nsample,length(f_num));
 
-    %% ÉèÖÃÊ±ÆµÆ×·¶Î§
+    %% è®¾ç½®æ—¶é¢‘è°±èŒƒå›´
     max_value = max(max(abs(Spec)));
     min_value = min(min(abs(Spec)));
 
- %% µ¥µÀÊ±ÆµÆ×
+ %% å•é“æ—¶é¢‘è°±
     figure
-    imagesc(f_min:f_max,t,abs(Spec(:,idx_min:idx_max)));% ÏÔÊ¾Ç°120ÆµÂÊµÄÊ±ÆµÆ×
+    imagesc(f_min:f_max,t,abs(Spec(:,idx_min:idx_max)));% æ˜¾ç¤ºå‰120é¢‘ç‡çš„æ—¶é¢‘è°±
 
-    caxis([min_value max_value])% ÉèÖÃÑÕÉ«Öá·¶Î§
-    JET = colormap(jet);% Ê¹ÓÃJETÉ«Í¼
+    caxis([min_value max_value])% è®¾ç½®é¢œè‰²è½´èŒƒå›´
+    JET = colormap(jet);% ä½¿ç”¨JETè‰²å›¾
     colormap (JET);   % Set the current colormap Style 
 
-    % µ÷ÕûÍ¼ĞÎÊôĞÔ
+    % è°ƒæ•´å›¾å½¢å±æ€§
     set(gcf,'position',[846.6,340.2,120,480]);
     set(gca,'linewidth',1.5,'fontsize',12,'fontname','Times New Roman');
 
     set(gca,'YTick',0:25:129);
-    %y_label = 3.2:0.1:3.7;  %%%%%×ª»¯ÎªºÁÃë
+    %y_label = 3.2:0.1:3.7;  %%%%%è½¬åŒ–ä¸ºæ¯«ç§’
     y_label = [];
     set(gca,'yticklabel',y_label);
-    set(gca,'YDir','reverse'); % ·´×ªYÖá
+    set(gca,'YDir','reverse'); % åè½¬Yè½´
     %ylabel('Time(s)','FontSize',12);
 
     %set(gca,'XTick',10:70:80);
@@ -89,57 +86,57 @@ for i= well_trace
     set(gca,'xticklabel',x_label);
     %xlabel('Frequency(Hz)','FontSize',12);
 
-    set(gcf,'Color','w'); % ÉèÖÃ±³¾°É«Îª°×É«
+    set(gcf,'Color','w'); % è®¾ç½®èƒŒæ™¯è‰²ä¸ºç™½è‰²
     text(-22,250,'(d)','horiz','left','fontsize',12,'fontname','Times New Roman');
     %title('CWT(\sl{f_{b}} \rm= 0.5, \sl{f_{c}} \rm= 1)','fontsize',12,'fontname','Times New Roman');
     %title('CWT','fontsize',12,'fontname','Times New Roman');
     h1 = gca;
     RemoveSubplotWhiteArea(h1, 1, 1, 1, 1);
-    set(gca,'Visible','off') %È¥³ı±ß¿ò Òş²Ø×ø±êÖá
+    set(gca,'Visible','off') %å»é™¤è¾¹æ¡† éšè—åæ ‡è½´
 
 
-    file_path1 =  'D:\1Inversion data\Ensemble-Learning\SAMME\data_pre\²âÊÔ´°¿ÚÊı¾İ¼¯3\ISD_Trace_block\';
-    % ¼ì²éÎÄ¼ş¼ĞÊÇ·ñ´æÔÚ£¬²»´æÔÚÔò´´½¨
+    file_path1 =  'D:\1Inversion data\Ensemble-Learning\SAMME\data_pre\æµ‹è¯•çª—å£æ•°æ®é›†3\ISD_Trace_block\';
+    % æ£€æŸ¥æ–‡ä»¶å¤¹æ˜¯å¦å­˜åœ¨ï¼Œä¸å­˜åœ¨åˆ™åˆ›å»º
     if ~exist(file_path1, 'dir')
         mkdir(file_path1);
     end
     filenm = ['ISD_' num2str(i) '.bmp' ];
     save_path = strcat(file_path1,filenm);
-    print(gcf,'-dtiff','-r50',save_path);%%ÓÃÍ¼Æ¬±¾À´Ãû³Æ±£´æ
+    print(gcf,'-dtiff','-r50',save_path);%%ç”¨å›¾ç‰‡æœ¬æ¥åç§°ä¿å­˜
     
     close(gcf);
     
-    %% »¬´°´óĞ¡
+    %% æ»‘çª—å¤§å°
     for block = 5:5:30
-        % ¶¨ÒåÎÄ¼ş¼ĞÃüÃû
-        folder_name = sprintf('ISD_%03d_%d', i, block); % ÎÄ¼ş¼ĞÃüÃû¸ñÊ½
-        file_path2 = fullfile('D:\1Inversion data\Ensemble-Learning\SAMME\data_pre\²âÊÔ´°¿ÚÊı¾İ¼¯3\ISD\', folder_name);
+        % å®šä¹‰æ–‡ä»¶å¤¹å‘½å
+        folder_name = sprintf('ISD_%03d_%d', i, block); % æ–‡ä»¶å¤¹å‘½åæ ¼å¼
+        file_path2 = fullfile('D:\1Inversion data\Ensemble-Learning\SAMME\data_pre\æµ‹è¯•çª—å£æ•°æ®é›†3\ISD\', folder_name);
 
-        % ¼ì²éÎÄ¼ş¼ĞÊÇ·ñ´æÔÚ£¬²»´æÔÚÔò´´½¨
+        % æ£€æŸ¥æ–‡ä»¶å¤¹æ˜¯å¦å­˜åœ¨ï¼Œä¸å­˜åœ¨åˆ™åˆ›å»º
         if ~exist(file_path2, 'dir')
             mkdir(file_path2);
         end
         
-        %% ÇĞ¿é    
+        %% åˆ‡å—    
         for j = 1:1:119       
 
-           %% Ê±ÆµÆğÊ¼Î»ÖÃ
+           %% æ—¶é¢‘èµ·å§‹ä½ç½®
             d_start = (30-block)/2 + j;
 
-           %% Ê±ÆµÆ×ÇĞ¿é
+           %% æ—¶é¢‘è°±åˆ‡å—
             figure;
             img = abs(Spec(:, idx_sampled));
-            img_resized = imresize(img, [size(img, 1), 15]); % ½«Í¼Ïñ¿í¶Èµ÷ÕûÎª15¸öÏñËØµã
-            block_spec = img_resized(d_start:d_start+block, :); % Ê¹ÓÃ»¬´°ÇĞ¿éÊı¾İ
-            imagesc(f_sampled, d_start:d_start+block, block_spec); % ÓÃ²ÉÑùÆµÂÊ»æÖÆÍ¼Ïñ
+            img_resized = imresize(img, [size(img, 1), 15]); % å°†å›¾åƒå®½åº¦è°ƒæ•´ä¸º15ä¸ªåƒç´ ç‚¹
+            block_spec = img_resized(d_start:d_start+block, :); % ä½¿ç”¨æ»‘çª—åˆ‡å—æ•°æ®
+            imagesc(f_sampled, d_start:d_start+block, block_spec); % ç”¨é‡‡æ ·é¢‘ç‡ç»˜åˆ¶å›¾åƒ
             
             caxis([min_value max_value])
             JET = colormap(jet);
             colormap (JET);   % Set the current colormap Style 
-            set(gcf, 'PaperUnits', 'inches', 'PaperPosition', [0 0 15/50 2*block/100]); % ÉèÖÃÍ¼ĞÎ´°¿Ú´óĞ¡
+            set(gcf, 'PaperUnits', 'inches', 'PaperPosition', [0 0 15/50 2*block/100]); % è®¾ç½®å›¾å½¢çª—å£å¤§å°
             set(gca,'linewidth',1.5,'fontsize',12,'fontname','Times New Roman');
             set(gca,'YTick',0:25:129);
-            %y_label = 3.2:0.1:3.7;  %%%%%×ª»¯ÎªºÁÃë
+            %y_label = 3.2:0.1:3.7;  %%%%%è½¬åŒ–ä¸ºæ¯«ç§’
             y_label = [];
             set(gca,'yticklabel',y_label);
             set(gca,'YDir','reverse'); 
@@ -154,11 +151,11 @@ for i= well_trace
             %title('CWT','fontsize',12,'fontname','Times New Roman');
             h1 = gca;
             RemoveSubplotWhiteArea(h1, 1, 1, 1, 1);
-            set(gca,'Visible','off') %È¥³ı±ß¿ò 
-            % Í¼Æ¬ÃüÃûºÍ±£´æ
-            filenm = sprintf('ISD_%03d_%03d.bmp', i, j); % Í¼Æ¬ÃüÃû¸ñÊ½
+            set(gca,'Visible','off') %å»é™¤è¾¹æ¡† 
+            % å›¾ç‰‡å‘½åå’Œä¿å­˜
+            filenm = sprintf('ISD_%03d_%03d.bmp', i, j); % å›¾ç‰‡å‘½åæ ¼å¼
             save_path = fullfile(file_path2, filenm);
-            print(gcf, '-dtiff', '-r50', save_path); % Ê¹ÓÃÍ¼Æ¬±¾À´µÄÃû³Æ±£´æ
+            print(gcf, '-dtiff', '-r50', save_path); % ä½¿ç”¨å›¾ç‰‡æœ¬æ¥çš„åç§°ä¿å­˜
             close all;
         end
     end
