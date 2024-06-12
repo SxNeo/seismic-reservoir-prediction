@@ -1,0 +1,10 @@
+
+    CNN_train_accuracy_: 0.8860465116279069
+    CNN_test_accuracy_: 0.8837209302325582
+    CNN_training_Precision: 0.5512941783472353
+    CNN_test_Precision: 0.5427777777777778
+    CNN_training_Recall: 0.5426443801564341
+    CNN_test_Recall: 0.541733633344048
+    CNN_training_F1-score: 0.5448424770458669
+    CNN_test_F1-score: 0.5407419495213229
+    
