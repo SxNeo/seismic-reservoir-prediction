@@ -89,7 +89,7 @@ def baseline_model(img_height, img_width, img_channels, n_classes):
 
     model.add(Dense(64, activation='relu'))
     model.add(Dropout(0.4))
-    model.add(Dense(32, activation='relu'))
+    model.add(Dense(64, activation='relu'))
     model.add(Dense(n_classes))
     model.add(Activation('softmax'))
 
@@ -115,7 +115,7 @@ def baseline_model_False(img_height, img_width, img_channels, n_classes):
 
     model.add(Dense(64, activation='relu'))
     model.add(Dropout(0.4))
-    model.add(Dense(32, activation='relu'))
+    model.add(Dense(64, activation='relu'))
     model.add(Dense(n_classes))
     model.add(Activation('softmax'))
 
@@ -286,8 +286,8 @@ image_folder_65 = rf'{input_path}\training and testing set\{way}\{way}_065_{samp
 image_folder_240 = rf'{input_path}\training and testing set\{way}\{way}_240_{sample_length}'
 image_folder_241 = rf'{input_path}\training and testing set\{way}\{way}_241_{sample_length}'
 image_folder_242 = rf'{input_path}\training and testing set\{way}\{way}_242_{sample_length}'
-labels_file1 = rf'{input_path}\WELL1_labels_{sample_num}_time_new3_3class.xlsx'
-labels_file2 = rf'{input_path}\WELl2_labels_{sample_num}_time_new3_3class.xlsx'
+labels_file1 = rf'{input_path}\WELL1_labels_{sample_num}_time_3class_new4.xlsx'
+labels_file2 = rf'{input_path}\WELl2_labels_{sample_num}_time_3class_new4.xlsx'
 pred_file = rf'{input_path}\predicting set\{way}_block_{sample_length}'
 
 X1 = load_images(image_folder_63)
@@ -309,13 +309,7 @@ X_test = np.concatenate((X1, X4), axis=0)
 y_test = np.concatenate((y1, y2), axis=0)
 
 n_classes = len(np.unique(y1))
-classes = {
-    0: '''Gas
-sandstone''',
-    1: '''Non-gas
-sandstone''',
-    2: '''Mudstone'''
-}
+classes = {0: 'Gas sandstone', 1: 'Non-gas sandstone', 2: 'Mudstone'}
 colors = {0: 'red', 1: 'yellow', 2: 'gray'}
 
 unique1, counts1, percentages1 = calculate_distribution(y1)
@@ -335,7 +329,7 @@ y_train_encoded = encoder.transform(y_train.reshape(-1, 1))
 y_test_encoded = encoder.transform(y_test.reshape(-1, 1))
 
 batch_size = 32
-n_estimators = 20
+n_estimators = 10
 epochs = 10
 img_height, img_width = X.shape[1], X.shape[2]
 img_channels = 3
@@ -411,7 +405,7 @@ if algorithm == 'SAMME':
     all_CNN_predictions_array = np.column_stack(all_CNN_predictions)
 
     predictions_CNN_df = pd.DataFrame(all_CNN_predictions_array)
-    predictions_CNN_df.to_excel(rf"{output_path}\{way}_{algorithm}_CNN_predictions_{n_classes}.xlsx", index=False)
+    predictions_CNN_df.to_excel(rf"{output_path}\{way}_CNN_predictions_{n_classes}.xlsx", index=False)
 
     colors = {0: 'red', 1: 'yellow', 2: 'gray'}
     rgb_image = np.zeros((*predictions_CNN_df.shape, 3))
@@ -439,7 +433,7 @@ if algorithm == 'SAMME':
     ax.set_position([0, 0, 1, 1])
 
     plt.tight_layout()
-    plt.savefig(rf'{output_path}\{way}_{algorithm}_CNN_predictions_image_{n_classes}.png', format='png', bbox_inches='tight', pad_inches=0,
+    plt.savefig(rf'{output_path}\{way}_CNN_predictions_image_{n_classes}.png', format='png', bbox_inches='tight', pad_inches=0,
                 dpi=600)
 
     all_predictions = []
@@ -499,7 +493,7 @@ else:
 
         class_proba_df = pd.DataFrame(class_image_data)
         class_proba_df.to_excel(
-            rf"{output_path}\{way}_{algorithm}_CNN_sorted_proba_class_{n_classes}_{class_index}.xlsx",
+            rf"{output_path}\{way}_CNN_sorted_proba_class_{n_classes}_{class_index}.xlsx",
             index=False)
 
     colors = {0: 'red', 1: 'yellow', 2: 'gray'}
@@ -514,7 +508,7 @@ else:
 
     for class_index in range(n_classes):
         sorted_proba_df = pd.read_excel(
-            rf"{output_path}\{way}_{algorithm}_CNN_sorted_proba_class_{n_classes}_{class_index}.xlsx")
+            rf"{output_path}\{way}_CNN_sorted_proba_class_{n_classes}_{class_index}.xlsx")
         sorted_class_proba = sorted_proba_df.values
 
         class_image = cmap(sorted_class_proba)
@@ -535,7 +529,7 @@ else:
 
         plt.tight_layout()
         plt.savefig(
-            rf'{output_path}\{way}_{algorithm}_CNN_sorted_proba_predictions_image_class_{n_classes}_{class_index}.png',
+            rf'{output_path}\{way}_CNN_sorted_proba_predictions_image_class_{n_classes}_{class_index}.png',
             format='png',
             bbox_inches='tight', pad_inches=0, dpi=600)
 
