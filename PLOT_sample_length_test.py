@@ -19,8 +19,8 @@ def read_results_from_txt(file_path):
             elif line.startswith('Sample_Length_'):
                 current_sample_length = int(line.split('_')[-1].strip()[:-1])
                 results[current_method][current_sample_length] = {}
-            elif line.startswith('CNN_training') or line.startswith('CNN_testing') \
-                or line.startswith('Ada_CNN_training') or line.startswith('Ada_CNN_testing'):
+            elif line.startswith('CNN_training') or line.startswith('CNN_validation') \
+                or line.startswith('Ada_CNN_training') or line.startswith('Ada_CNN_validation'):
                 metric_name, values_str = line.split(':')
                 metric_name = metric_name.strip()
                 values = [float(value.strip()) for value in values_str.split(',')]
@@ -29,8 +29,8 @@ def read_results_from_txt(file_path):
     return results
 
 def plot_f1_scores_by_sample_length(all_results, sample_lengths, output_path):
-    evaluation_types = ['training', 'testing']
-    titles = ['Training Data', 'Testing Data']
+    evaluation_types = ['training', 'validation']
+    titles = ['Training Data', 'Validation Data']
     colors = cycle(['blue', 'red'])
     line_styles = cycle(['-', '--', '-.', ':'])
 
@@ -50,7 +50,7 @@ def plot_f1_scores_by_sample_length(all_results, sample_lengths, output_path):
             labels.extend([f'{way}-CNN', f'{way}-AdaBoost-CNN'])
 
         plt.xlabel('Sample Length')
-        plt.ylabel(f'F1 of {evaluation} data')
+        plt.ylabel(f'ave-F1 of {evaluation} subsets')
         plt.xticks(sample_lengths)
         plt.grid(True)
 
@@ -67,7 +67,7 @@ def plot_f1_scores_by_sample_length(all_results, sample_lengths, output_path):
 file_path = r"C:\01 CodeofPython\AdaBoost_CNN\AdaBoost_CNN-master\code\sample length\all_results.txt"
 results = read_results_from_txt(file_path)
 
-sample_lengths = [5,10,15,20,25]
+sample_lengths = [5,10,15,20,25,30]
 
 output_path = r"C:\01 CodeofPython\AdaBoost_CNN\AdaBoost_CNN-master\code\sample length"
 plot_f1_scores_by_sample_length(results, sample_lengths, output_path)
