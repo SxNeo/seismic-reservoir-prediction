@@ -1,0 +1,10 @@
+
+    Ada_CNN_train_accuracy_: 0.9093023255813953
+    Ada_CNN_test_accuracy_: 0.9162790697674419
+    Ada_CNN_training_Precision: 0.7775714021200759
+    Ada_CNN_test_Precision: 0.8361378402829182
+    Ada_CNN_training_Recall: 0.6937158469945355
+    Ada_CNN_test_Recall: 0.6816029143897996
+    Ada_CNN_training_F1-score: 0.7301816878529848
+    Ada_CNN_test_F1-score: 0.7404335306350983
+    
