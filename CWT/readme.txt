@@ -1,1 +1,0 @@
-results of cwt method
